@@ -1,38 +1,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
+  name: podflow-msvc-comm-microservice5-productorder-deployment  # microservice5-productorder-server 
+  namespace: appns
   labels:
-    app: flaskdemo
-  name: flaskdemo
+    app: podflow-msvc-comm-microservice5-app	# Label for the Deployment only
 spec:
-  replicas: 3
+  replicas: 1		# 1 Pod will be created
   selector:
     matchLabels:
-      app: flaskdemo
-  strategy: {}
+      app: podflow-msvc-comm-microservice5   # This selector identifies the Pods managed by this Deployment
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        app: flaskdemo
+        app: podflow-msvc-comm-microservice5   # Pods will have this label - matching the selector
     spec:
       containers:
-      - image: dibsiit123/test:6
-        name: flaskdemo
-        resources: {}
-status: {}
+        - name: podflow-msvc-comm-microservice5-productorder-container
+          image: dibsiit123/microservice5-podflow-msvc-comm-productorder-kbn-sbsvr5     # docker image for microservice5 sbsvr
+          ports:
+            - name: http
+              containerPort: 8080   # Port the Spring Boot app listens on -Tomcat embedded
+              protocol: TCP
+          resources: 		   # Define resource requests and limits for production
+            requests:
+              memory: "512Mi"      # Request 512 Megabytes of RAM
+              cpu: "250m"          # Request 0.25 CPU cores (millicores)
+            limits:
+              memory: "512Mi"      # Limit to 512Mi of RAM
+              cpu: "500m"          # Limit to 0.5 CPU cores	
+          env:
+            - name: REDIS_CACHE_SERVICE_NAME
+              value: redis-cache-service.redisns              # Service Name redis-cache-service.redisns
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: lb-service
+  name: podflow-msvc-comm-microservice5-productorder-service    # This name will be used by the Ingress resource
+  namespace: appns
   labels:
-    app: lb-service
+    app: podflow-msvc-comm-microservice5
 spec:
-  type: LoadBalancer
+  type: ClusterIP          # Exposes the service on a cluster-internal IP
   ports:
-  - port: 80
-    targetPort: 5000
+    - port: 80             # Port the Service exposes within the cluster.Ingress will use this port.
+      name: http-port      # Named port
+      targetPort: 8080     # Port on the Pods where the application- containerPort is listening
+      protocol: TCP
   selector:
-    app: flaskdemo
+    app: podflow-msvc-comm-microservice5

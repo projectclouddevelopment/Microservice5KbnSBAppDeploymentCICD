@@ -6,7 +6,7 @@ metadata:
   labels:
     app: podflow-msvc-comm-microservice5-app	# Label for the Deployment only
 spec:
-  replicas: 1		# 1 Pod will be created
+  replicas: 2		# 1 Pod will be created
   selector:
     matchLabels:
       app: podflow-msvc-comm-microservice5   # This selector identifies the Pods managed by this Deployment
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: podflow-msvc-comm-microservice5-productorder-container
-          image: dibsiit123/microservice5-podflow-msvc-comm-productorder-kbn-sbsvr5     # docker image for microservice5 sbsvr
+          image: dibsiit123/microservice5-podflow-msvc-comm-productorder-kbn-sbsvr5:2     # docker image for microservice5 sbsvr
           ports:
             - name: http
               containerPort: 8080   # Port the Spring Boot app listens on -Tomcat embedded

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: podflow-msvc-comm-microservice5-productorder-container
-          image: dibsiit123/microservice5-podflow-msvc-comm-productorder-kbn-sbsvr5:2     # docker image for microservice5 sbsvr
+          image: dibsiit123/microservice5-podflow-msvc-comm-productorder-kbn-sbsvr5:3     # docker image for microservice5 sbsvr
           ports:
             - name: http
               containerPort: 8080   # Port the Spring Boot app listens on -Tomcat embedded
